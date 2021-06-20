@@ -1,0 +1,122 @@
+:root{
+  --containerColor:rgb(255, 217, 0);
+}
+
+
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: linear-gradient(90deg, red, darkorange 30%,darkorange 70%, red );
+}
+
+h1 {
+  font-size: 3rem;
+  color: maroon;
+  background-color: grey;
+  padding: 40px 25px;
+  width: 80%;
+  text-align: center;
+  border-radius: 15px;
+  border: 5px solid black
+}
+
+#hud{
+  background-color: var(--containerColor);;
+  padding:20px;
+  text-align: center;
+  font-size: x-large;
+  border: black solid 5px;
+  border-radius: 10px;
+  width: 65%;
+  margin: 10px auto;
+}
+
+.main-menu {
+  border: black solid 5px;
+  border-radius: 15px;
+  width: 75%;
+  height: fit-content;
+  min-height: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: var(--containerColor);
+}
+
+.game-screen{
+  display: none;
+  border: black solid 5px;
+  border-radius: 15px;
+  width: 75%;
+  height: fit-content;
+  min-height: 400px;
+  margin: 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--containerColor);
+}
+
+.time-remaining-display{
+  position: relative;
+  bottom:60px;
+
+}
+
+.hidden.hidden{
+  animation: fade-out 0.8s;
+}
+
+.reveal.reveal{
+  animation: fade-in 0.8s;
+}
+
+#start-game{
+  background-color:grey;
+  font-size: x-large;
+  color: white;
+  border: black solid 5px;
+  border-radius: 15px;
+  width: 50%;
+  height: 60px;
+  transition: background-color 0.5s, border 0.5s;
+}
+
+#start-game:hover{
+  background-color:rgb(173, 173, 173);
+  color: white;
+  border: red solid 5px;
+  transition: background-color 0.5s, border 0.5s;
+}
+
+#start-game:active{
+  background-color:white;
+  color: white;
+  border: pink solid 5px;
+  transition: background-color 50ms, border 50ms;
+}
+
+.word-slots{
+  background-color: red;
+  padding:5%;
+  height: fit-content;
+  width: fit-content;
+}
+.letter-slot{
+  width:40px;
+  height:50px;
+  text-align: center;
+  font-size: xx-large;
+  font-family: 'Bungee', cursive;
+}
+
+@keyframes fade-in {
+  0% {opacity: 0}
+  100%{opacity:1}
+}
+
+@keyframes fade-out {
+  0% {opacity: 1}
+  100%{opacity:0}
+}

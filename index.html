@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script></script> <!--empty script tag prevents transitions from firing on page load. -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/style.css">
+  <title>Document</title>
+</head>
+<body>
+  <div id="hud">Wins: <span id='wins'>XX</span> | Losses: <span id='losses'>XX</span></div>
+  <div class="main-menu">
+    <h1>WORD GUESS</h1>  
+    <button id="start-game">Start Game!</button>
+  </div>
+
+  <div class="game-screen">
+    <h2 class = "time-remaining-display">Time Remaining: <span class="time-remaining"></span></h2>
+    <div class="word-slots">
+      <!-- <input type="text" readonly> -->
+      <!-- write JS logic to append blank slots here according to length of word. -->
+    </div>
+    
+    <h2 class = "guesses-left-display">Guesses left: <span class="guesses-left"></span></h2>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
