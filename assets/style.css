@@ -30,6 +30,19 @@ h1 {
   margin: 10px auto;
 }
 
+.section {  border: black solid 5px;
+  border-radius: 15px;
+  width: 75%;
+  height: fit-content;
+  min-height: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: var(--containerColor);
+}
+
 .main-menu {
   border: black solid 5px;
   border-radius: 15px;
@@ -56,6 +69,19 @@ h1 {
   align-items: center;
   justify-content: center;
   background-color: var(--containerColor);
+}
+
+.end-screen{
+    border: black solid 5px;
+    border-radius: 15px;
+    width: 75%;
+    height: fit-content;
+    min-height: 400px;
+    margin: 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--containerColor);
 }
 
 .time-remaining-display{

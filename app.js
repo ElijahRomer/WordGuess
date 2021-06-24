@@ -8,6 +8,7 @@ let mainMenuEl = document.querySelector('.main-menu');
 let gameScreenEl = document.querySelector('.game-screen');
 let possibleWords = ['Challenge', 'Awesome', 'Programming', 'Photograph', 'Skydiving', 'Parachute'];
 let slotHTMLCollection;
+let timerDispla
 
 //start button event listener
 document.querySelector('#start-game').addEventListener('click', startGame);
@@ -26,29 +27,56 @@ function guessCheck(eventObject){
   console.log(keyPressed);
 }
 
-function startGame() {
+async function startGame() {
   console.log('Button Works!');
-  transitionAnimation();
+  await transitionAnimation();
     var word = wordSelector().toLowerCase();
     console.log(word); 
     slotHTMLCollection = createWordSlots(word);
   assignEachWordSlotAValidLetter(word, slotHTMLCollection);
   console.log(slotHTMLCollection);
+  timerStart();
 };
 
+function timeout(fn, ms){
+  return new Promise(resolve => setTimeout(()=> {
+    console.log('timer finished, executing function')
+    fn();
+    console.log('function executed, resolving promise')
+    resolve();
+    console.log('Promise resolved.')
+  }, ms));
+}
 
-
-function transitionAnimation(){
+async function transitionAnimation(){
   mainMenuEl.classList.add('hidden');
-  setTimeout(function(){
+  await timeout(function(){
     mainMenuEl.style.display = 'none';
     mainMenuEl.classList.remove('hidden');
     gameScreenEl.style.display = 'flex';
     gameScreenEl.classList.add('reveal');
-    setTimeout(function(){
-      gameScreenEl.classList.remove('reveal');
-    }, 700)
   }, 700)
+  await timeout(function(){
+    gameScreenEl.classList.remove('reveal');
+    console.log('reveal class removed from main menu')
+  }, 700)
+}
+
+
+
+function timerStart(){
+   let timeRemainingEl = document.querySelector('.time-remaining');
+   let timeLeft = 60;
+   let timerMechanism = setInterval(() => {
+     if (timeLeft <= 0){
+        clearInterval(timerMechanism);
+        //quizEnd()
+     } else {
+        timeLeft--;
+        timeRemainingEl.textContent = timeLeft;
+     }
+   }, 1000);
+   console.log(timeRemainingEl);
 }
 
 
@@ -67,10 +95,6 @@ function createWordSlots(word){
     slot.textContent = '_';
     slot.setAttribute('maxlength', '1');
     slot.readOnly = true;
-    // if(i === 0) {
-    //   slot.readOnly = false;
-    //   slot.style.backgroundColor = 'limegreen';
-    // };
     document.querySelector('.word-slots').append(slot);
   }
   let slotHTMLCollection = document.querySelectorAll('.letter-slot');
@@ -90,7 +114,9 @@ function assignEachWordSlotAValidLetter(word, slotHTMLCollection) {
 }
 
 
-
+function quizEnd(){
+  
+}
 
 
 
