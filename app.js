@@ -3,119 +3,230 @@ console.log('If this is logged, then app.js is linked correctly');
 // As a user, I want to start the game by clicking on a button.
 
 //******START GAME BUTTON event listener
-
+console.log(document.querySelector('.end-screen').firstChild)
 let mainMenuEl = document.querySelector('.main-menu');
 let gameScreenEl = document.querySelector('.game-screen');
+let endScreenEl = document.querySelector('.end-screen');
 let possibleWords = ['Challenge', 'Awesome', 'Programming', 'Photograph', 'Skydiving', 'Parachute'];
+// let possibleWords = ['Skydiving'];
+// let possibleWords = ['a'];
+// let possibleWords = ['objectivization'];
+let acceptableLetters = ['a', 'b']
 let slotHTMLCollection;
-let timerDispla
+let lettersGuessed;
+let incorrectLettersGuessed;
+let guessesLeftEl = document.querySelector('.guesses-left')
+let numberOfGuesses = 6;
+let acceptableGuessLettersArray = createAcceptableGuessLettersArray();
+let numberOfLetterSlots;
+let numberOfMatches;
+let totalNumberOfGuesses;
+
+//create acceptable guess array
+function createAcceptableGuessLettersArray(){
+  let lowerCaseCodeArray = Array.from(Array(26)).map(
+      (element, index) => {
+      return index + 97
+  });
+  let upperCaseCodeArray = Array.from(Array(26)).map(
+      (element, index) => {
+      return index + 65
+  });
+  let allAcceptableLetterCodes = lowerCaseCodeArray.concat(upperCaseCodeArray);
+
+  let alphabetArray = allAcceptableLetterCodes.map(element => {
+      return String.fromCharCode(element);
+  })
+  // console.log(alphabetArray);
+  return alphabetArray;
+};
+
+
 
 //start button event listener
 document.querySelector('#start-game').addEventListener('click', startGame);
-document.addEventListener('keypress', guessCheck)
+
 //add keypress event listener
 
 function guessCheck(eventObject){
+    console.log('%cGUESSCHECK FIRED', 'color:red')
   let keyPressed = eventObject.key;
+    console.log(`The key pressed was ${keyPressed}`)
+    console.log(`The letters already guessed are "${lettersGuessed}"`)
+  let numberOfMatchesThisIteration = 0;
+  
+  if (!acceptableGuessLettersArray.includes(keyPressed)){
+    console.log(`${keyPressed} IS NOT A VALID GUESS.`)
+  } else if (lettersGuessed.includes(keyPressed)){
+    console.log(`You have already guessed ${keyPressed}.`)
+  } else {
   for (let i = 0; i < slotHTMLCollection.length; i++){
     if (slotHTMLCollection[i].classList.contains(keyPressed)){
-      console.log(slotHTMLCollection[i])
       slotHTMLCollection[i].value = keyPressed;
+      numberOfMatchesThisIteration++
+      } 
     }
-
+    lettersGuessed.push(keyPressed);
   }
-  console.log(keyPressed);
+      console.log(`The number of matches for that guess was ${numberOfMatchesThisIteration}`);
+    numberOfMatches += numberOfMatchesThisIteration;
+
+      console.log(`The letters already guessed have been updated to: "${lettersGuessed}".`)
+      console.log(`The number of matches total is ${numberOfMatches}`)
+
+
+  if (numberOfMatchesThisIteration === 0){
+    invalidGuess(keyPressed);
+  }
+
+    if (numberOfMatchesThisIteration > 0){
+    gameWinCheck(numberOfMatches);
+  }
+}
+
+function gameWinCheck (numberOfMatches) {
+  console.log(`%cGAMEWINCHECK FIRED.`, 'color:limegreen')
+  if (numberOfMatches == numberOfLetterSlots){
+    console.log('WIN REGISTERED!')
+    gameEnd('win');
+  } else {
+    return;
+  }
+};
+
+function invalidGuess(keyPressed){
+    console.log('%cINVALIDGUESS FIRED', 'color:orange');
+    console.log(`Invalid guess of ${keyPressed}`);
+  let lettersGuessedEl = document.querySelector('.letters-guessed');
+  if (incorrectLettersGuessed.includes(` ${keyPressed}`)) {
+    console.log(`You have already guessed ${keyPressed}.`);
+  } else if(numberOfGuesses === 0){
+    gameEnd('guessLoss');
+  } else {
+  numberOfGuesses--;
+  guessesLeftEl.textContent = numberOfGuesses;
+  incorrectLettersGuessed.push(` ${keyPressed}`);
+  lettersGuessedEl.textContent = incorrectLettersGuessed;
+  }
 }
 
 async function startGame() {
-  console.log('Button Works!');
-  await transitionAnimation();
+  console.log('STARTGAME FIRED');
+  await transitionAnimation(mainMenuEl, gameScreenEl);
+  document.addEventListener('keypress', guessCheck);
     var word = wordSelector().toLowerCase();
-    console.log(word); 
+    console.log(`At Start Game: Word Selector Function chose: ${word}`); 
     slotHTMLCollection = createWordSlots(word);
+    guessesLeftEl.textContent = numberOfGuesses
   assignEachWordSlotAValidLetter(word, slotHTMLCollection);
-  console.log(slotHTMLCollection);
+  resetValues();
   timerStart();
+  console.log('The SlotHTMLCollection element value at index 0 at startGame is as follows:');
+  console.log(`"${slotHTMLCollection[0].value}"`);
 };
 
+function resetValues() {
+  numberOfMatches = 0;
+  totalNumberOfGuesses = 0;
+  lettersGuessed = [];
+  incorrectLettersGuessed = [];
+}
+
 function timeout(fn, ms){
+  console.log('TIMEOUT FIRED')
   return new Promise(resolve => setTimeout(()=> {
-    console.log('timer finished, executing function')
+    // console.log('timer finished, executing function')
     fn();
-    console.log('function executed, resolving promise')
+    // console.log('function executed, resolving promise')
     resolve();
-    console.log('Promise resolved.')
+    // console.log('Promise resolved.')
   }, ms));
 }
 
-async function transitionAnimation(){
-  mainMenuEl.classList.add('hidden');
+async function transitionAnimation(currentElement, nextElement){
+  console.log('TRANSITIONANIMATION FIRED')
+  currentElement.classList.add('hidden');
   await timeout(function(){
-    mainMenuEl.style.display = 'none';
-    mainMenuEl.classList.remove('hidden');
-    gameScreenEl.style.display = 'flex';
-    gameScreenEl.classList.add('reveal');
+    currentElement.style.display = 'none';
+    currentElement.classList.remove('hidden');
+    nextElement.style.display = 'flex';
+    nextElement.classList.add('reveal');
   }, 700)
   await timeout(function(){
-    gameScreenEl.classList.remove('reveal');
-    console.log('reveal class removed from main menu')
+    nextElement.classList.remove('reveal');
+    console.log('reveal class removed from nextElement')
   }, 700)
 }
 
 
 
 function timerStart(){
+  console.log('TIMERSTART FIRED')
    let timeRemainingEl = document.querySelector('.time-remaining');
    let timeLeft = 60;
    let timerMechanism = setInterval(() => {
      if (timeLeft <= 0){
         clearInterval(timerMechanism);
-        //quizEnd()
+        gameEnd('timeLoss');
      } else {
         timeLeft--;
         timeRemainingEl.textContent = timeLeft;
      }
    }, 1000);
-   console.log(timeRemainingEl);
 }
 
 
 
 function wordSelector(){
+  console.log('WORDSELECTOR FIRED')
   return possibleWords[Math.floor(Math.random() * possibleWords.length)];
 }
 
 
 function createWordSlots(word){
-  let numberOfLetterSlots = word.length;
-  console.log(numberOfLetterSlots);
+  console.log('CREATEWORDSLOTS FIRED')
+  numberOfLetterSlots = word.length;
+  console.log(`The length of the chose word is ${numberOfLetterSlots}.`);
   for (let i = 0; i < numberOfLetterSlots; i++){
     let slot = document.createElement('input');
     slot.classList.add('letter-slot');
-    slot.textContent = '_';
+    slot.value = ' ';
     slot.setAttribute('maxlength', '1');
     slot.readOnly = true;
     document.querySelector('.word-slots').append(slot);
   }
-  let slotHTMLCollection = document.querySelectorAll('.letter-slot');
-  console.log(slotHTMLCollection);
+  let slotHTMLCollection = document.getElementsByClassName('letter-slot');
+  // console.log(slotHTMLCollection);
   return slotHTMLCollection;
 }
 
 function assignEachWordSlotAValidLetter(word, slotHTMLCollection) {
+  console.log('ASSIGNEACHWORDSLOTAVALIDLETTER FIRED')
   let currentWordLettersArray = word.split('');
-  console.log(currentWordLettersArray);
-  console.log(slotHTMLCollection);
+
   currentWordLettersArray.forEach((letter, i) => {
     slotHTMLCollection[i].classList.add(letter);
+    slotHTMLCollection[i].classList.add(letter.toUpperCase());
   })
-  console.log(slotHTMLCollection);
+  // console.log(slotHTMLCollection);
   return slotHTMLCollection;
 }
 
 
-function quizEnd(){
-  
+async function gameEnd(gameEndState){
+  console.log('%cGAMEEND FIRED', 'color:limegreen')
+  let endH1El = document.querySelector('.end-screen').firstChild.nextSibling;
+  if(gameEndState === 'win'){
+    endH1El.textContent = `You WON! You guessed all the letters correctly within the allowed timeFrame.`;
+    document.createElement('ul')
+    await transitionAnimation(gameScreenEl, endScreenEl);
+  } else if(gameEndState === 'guessLoss') {
+    endH1El.textContent = `Game Over! You ran out of guesses.`;
+    await transitionAnimation(gameScreenEl, endScreenEl);
+  } else if(gameEndState === 'timeLoss'){
+    endH1El.textContent = `Game Over! The Timer ran out.`;
+    await transitionAnimation(gameScreenEl, endScreenEl);
+  }
 }
 
 

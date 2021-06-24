@@ -49,6 +49,7 @@ h1 {
   width: 75%;
   height: fit-content;
   min-height: 400px;
+  padding: 30px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -58,6 +59,22 @@ h1 {
 }
 
 .game-screen{
+  display: none;
+  border: black solid 5px;
+  border-radius: 15px;
+  width: fit-content;
+  height: fit-content;
+  min-height: 400px;
+  min-width: 660px;
+  padding: 30px;
+  margin: 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--containerColor);
+}
+
+.end-screen{
   display: none;
   border: black solid 5px;
   border-radius: 15px;
@@ -71,22 +88,9 @@ h1 {
   background-color: var(--containerColor);
 }
 
-.end-screen{
-    border: black solid 5px;
-    border-radius: 15px;
-    width: 75%;
-    height: fit-content;
-    min-height: 400px;
-    margin: 0 auto;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--containerColor);
-}
-
 .time-remaining-display{
   position: relative;
-  bottom:60px;
+  /* bottom:60px; */
 
 }
 
@@ -125,9 +129,11 @@ h1 {
 
 .word-slots{
   background-color: red;
-  padding:5%;
+  text-align: center;
+  padding:30px;
+  margin:0 30px;
   height: fit-content;
-  width: fit-content;
+  width: 730px;
 }
 .letter-slot{
   width:40px;
