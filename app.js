@@ -7,11 +7,12 @@ console.log(document.querySelector('.end-screen').firstChild)
 let mainMenuEl = document.querySelector('.main-menu');
 let gameScreenEl = document.querySelector('.game-screen');
 let endScreenEl = document.querySelector('.end-screen');
-let possibleWords = ['Challenge', 'Awesome', 'Programming', 'Photograph', 'Skydiving', 'Parachute'];
+let winsEl = document.querySelector
+// let possibleWords = ['Challenge', 'Awesome', 'Programming', 'Photograph', 'Skydiving', 'Parachute'];
 // let possibleWords = ['Skydiving'];
-// let possibleWords = ['a'];
+let possibleWords = ['a'];
 // let possibleWords = ['objectivization'];
-let acceptableLetters = ['a', 'b']
+// let acceptableLetters = ['a', 'b']
 let slotHTMLCollection;
 let lettersGuessed;
 let incorrectLettersGuessed;
@@ -21,6 +22,8 @@ let acceptableGuessLettersArray = createAcceptableGuessLettersArray();
 let numberOfLetterSlots;
 let numberOfMatches;
 let totalNumberOfGuesses;
+let timerMechanism;
+let timeLeft;
 
 //create acceptable guess array
 function createAcceptableGuessLettersArray(){
@@ -46,7 +49,8 @@ function createAcceptableGuessLettersArray(){
 //start button event listener
 document.querySelector('#start-game').addEventListener('click', startGame);
 
-//add keypress event listener
+//return to main menu event listener
+document.querySelector('.return-main-menu').addEventListener('click', returnToMainMenu);
 
 function guessCheck(eventObject){
     console.log('%cGUESSCHECK FIRED', 'color:red')
@@ -163,8 +167,8 @@ async function transitionAnimation(currentElement, nextElement){
 function timerStart(){
   console.log('TIMERSTART FIRED')
    let timeRemainingEl = document.querySelector('.time-remaining');
-   let timeLeft = 60;
-   let timerMechanism = setInterval(() => {
+   timeLeft = 60;
+   timerMechanism = setInterval(() => {
      if (timeLeft <= 0){
         clearInterval(timerMechanism);
         gameEnd('timeLoss');
@@ -172,7 +176,7 @@ function timerStart(){
         timeLeft--;
         timeRemainingEl.textContent = timeLeft;
      }
-   }, 1000);
+   }, 100);
 }
 
 
@@ -215,18 +219,32 @@ function assignEachWordSlotAValidLetter(word, slotHTMLCollection) {
 
 async function gameEnd(gameEndState){
   console.log('%cGAMEEND FIRED', 'color:limegreen')
-  let endH1El = document.querySelector('.end-screen').firstChild.nextSibling;
+  let endScreenTitle = document.querySelector('.end-screen').firstChild.nextSibling;
+  let stats = document.querySelector('.stats')
   if(gameEndState === 'win'){
-    endH1El.textContent = `You WON! You guessed all the letters correctly within the allowed timeFrame.`;
-    document.createElement('ul')
-    await transitionAnimation(gameScreenEl, endScreenEl);
+    endScreenTitle.textContent = `You WON! You guessed all the letters correctly within the allowed timeframe.`;
+      clearInterval(timerMechanism);
+      let timeLeftEndEl = document.createElement('p');
+      timeLeftEndEl.textContent = `You had ${timeLeft} second(s) left.`;
+      console.log(`${timeLeftEndEl}`);
+      let guessesLeftEndEl = document.createElement('p');
+      guessesLeftEndEl.textContent = `You had ${numberOfGuesses} guesses left.`;
+      console.log(`${guessesLeftEndEl}`);
+      stats.appendChild(timeLeftEndEl);
+      stats.appendChild(guessesLeftEndEl);
+      console.log(`You had ${timeLeft} second(s) left.`)
+      await transitionAnimation(gameScreenEl, endScreenEl);
   } else if(gameEndState === 'guessLoss') {
-    endH1El.textContent = `Game Over! You ran out of guesses.`;
-    await transitionAnimation(gameScreenEl, endScreenEl);
+      endScreenTitle.textContent = `Game Over! You ran out of guesses.`;
+      await transitionAnimation(gameScreenEl, endScreenEl);
   } else if(gameEndState === 'timeLoss'){
-    endH1El.textContent = `Game Over! The Timer ran out.`;
-    await transitionAnimation(gameScreenEl, endScreenEl);
+      endScreenTitle.textContent = `Game Over! The Timer ran out.`;
+      await transitionAnimation(gameScreenEl, endScreenEl);
   }
+}
+
+async function returnToMainMenu(){
+  await transitionAnimation(endScreenEl, mainMenuEl)
 }
 
 

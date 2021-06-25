@@ -19,6 +19,7 @@ h1 {
   border: 5px solid black
 }
 
+
 #hud{
   background-color: var(--containerColor);;
   padding:20px;
@@ -88,6 +89,8 @@ h1 {
   background-color: var(--containerColor);
 }
 
+
+
 .time-remaining-display{
   position: relative;
   /* bottom:60px; */
@@ -141,6 +144,67 @@ h1 {
   text-align: center;
   font-size: xx-large;
   font-family: 'Bungee', cursive;
+}
+
+.end-screen .end-screen-title {
+  font-size: 2rem;
+  color: maroon;
+  background-color: grey;
+  padding: 40px 25px;
+  margin-top: 30px;
+  width: 80%;
+  text-align: center;
+  border-radius: 15px;
+  border: 5px solid black
+}
+.end-screen .stats {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  font-size: 1.5rem;
+  background-color: black;
+  list-style: none;
+  text-align: center;
+  margin: 15px auto 0 auto;
+  padding: 15px;
+  border: 5px black solid;
+  width: fit-content;
+  height: 100px;
+  border-radius: 15px;
+}
+
+.end-screen p {
+  margin:0;
+  font-weight: bold;
+  color:white;
+}
+
+.end-screen .return-main-menu {
+  border: black solid 5px;
+  padding:25px;
+  margin: 20px;
+  background-color:rgb(90, 90, 90);
+  text-align: center;
+  font-size: 1.5em;
+  color: white;
+  border-radius: 15px;
+  width:fit-content;
+  height: fit-content;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.end-screen .return-main-menu:hover{
+  background-color:rgb(129, 129, 129);
+  color: white;
+  border: red solid 5px;
+  transition: background-color 0.3s, border 0.3s;
+}
+
+.end-screen .return-main-menu:active{
+  background-color:white;
+  color: white;
+  border: pink solid 5px;
+  transition: background-color 50ms, border 50ms;
 }
 
 @keyframes fade-in {
