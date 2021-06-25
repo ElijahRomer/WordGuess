@@ -18,11 +18,10 @@ let slotHTMLCollection;
 let lettersGuessed;
 let incorrectLettersGuessed;
 let guessesLeftEl = document.querySelector('.guesses-left')
-let numberOfGuesses = 6;
+let numberOfGuesses;
 let acceptableGuessLettersArray = createAcceptableGuessLettersArray();
 let numberOfLetterSlots;
 let numberOfMatches;
-let totalNumberOfGuesses;
 let timerMechanism;
 let timeLeft;
 let numberOfWins;
@@ -137,14 +136,12 @@ function invalidGuess(keyPressed){
 }
 
 async function startGame() {
-  console.log('STARTGAME FIRED');
-  
+    console.log('STARTGAME FIRED');
   resetGameValues();
   document.addEventListener('keypress', guessCheck);
-    var word = wordSelector().toLowerCase();
-    console.log(`At Start Game: Word Selector Function chose: ${word}`); 
+    var word = wordSelector().toLowerCase(); 
     slotHTMLCollection = createWordSlots(word);
-    guessesLeftEl.textContent = numberOfGuesses
+    guessesLeftEl.textContent = numberOfGuesses;
   assignEachWordSlotAValidLetter(word, slotHTMLCollection);
   await transitionAnimation(mainMenuEl, gameScreenEl);
   timerStart();
@@ -154,10 +151,14 @@ async function startGame() {
 function resetGameValues() {
   console.log('RESET GAME VALUES FIRED')
   numberOfMatches = 0;
-  totalNumberOfGuesses = 0;
+  numberOfGuesses = 6;
   lettersGuessed = [];
   incorrectLettersGuessed = [];
+  let lettersGuessedEl = document.querySelector('.letters-guessed');
+  lettersGuessedEl.textContent = incorrectLettersGuessed;
   timeLeft = 60;
+  let timeRemainingEl = document.querySelector('.time-remaining');
+  timeRemainingEl.textContent = timeLeft;
   console.log(slotHTMLCollection);
   if(slotHTMLCollection){
     for (let i = 0; i < slotHTMLCollection.length; i++){
@@ -170,11 +171,8 @@ function resetGameValues() {
 function timeout(fn, ms){
   console.log('TIMEOUT FIRED')
   return new Promise(resolve => setTimeout(()=> {
-    // console.log('timer finished, executing function')
     fn();
-    // console.log('function executed, resolving promise')
     resolve();
-    // console.log('Promise resolved.')
   }, ms));
 }
 
@@ -189,27 +187,29 @@ async function transitionAnimation(currentElement, nextElement){
   }, 700)
   await timeout(function(){
     nextElement.classList.remove('reveal');
-    console.log('reveal class removed from nextElement')
+    console.log(`reveal class removed from ${nextElement}`)
   }, 700)
 }
 
 
-
 function timerStart(){
   console.log('TIMERSTART FIRED')
+  let timeRemainingDisplayEl = document.querySelector('.time-remaining-display');
    let timeRemainingEl = document.querySelector('.time-remaining');
   //  timeLeft = 60;
    timerMechanism = setInterval(() => {
+    if(timeLeft <= 10){
+      timeRemainingDisplayEl.style.color = 'red';
+    };
      if (timeLeft <= 0){
         clearInterval(timerMechanism);
         gameEnd('timeLoss');
      } else {
         timeLeft--;
         timeRemainingEl.textContent = timeLeft;
-     }
-   }, 100);
+     };
+   }, 1000);
 }
-
 
 
 function wordSelector(){
@@ -250,19 +250,23 @@ function assignEachWordSlotAValidLetter(word, slotHTMLCollection) {
 
 async function gameEnd(gameEndState){
   console.log('%cGAMEEND FIRED', 'color:limegreen')
+  clearInterval(timerMechanism);
   let endScreenTitle = document.querySelector('.end-screen').firstChild.nextSibling;
+  let endScreenStatBox = document.querySelector('.end-screen').firstChild.nextSibling.nextSibling.nextSibling;
+  console.log(endScreenStatBox);
   updateScore(gameEndState);
   if(gameEndState === 'win'){
     endScreenTitle.textContent = `You WON! You guessed all the letters correctly within the allowed timeframe.`;
-      clearInterval(timerMechanism);
       displayStats();
-   
+      endScreenStatBox.style.display = 'flex';
       await transitionAnimation(gameScreenEl, endScreenEl);
   } else if(gameEndState === 'guessLoss') {
       endScreenTitle.textContent = `Game Over! You ran out of guesses.`;
+      endScreenStatBox.style.display = 'none';
       await transitionAnimation(gameScreenEl, endScreenEl);
   } else if(gameEndState === 'timeLoss'){
       endScreenTitle.textContent = `Game Over! The Timer ran out.`;
+      endScreenStatBox.style.display = 'none';
       await transitionAnimation(gameScreenEl, endScreenEl);
   }
 }
@@ -270,33 +274,21 @@ async function gameEnd(gameEndState){
 function clearStats(){
   console.log(`CLEAR STATS FIRED`)
   let statsElContent = document.getElementsByClassName('stats')[0].children;
-  console.log(statsElContent)
-  console.log(`the number of stats in the stats end game element is ${statsElContent.length}.`)
   if (statsElContent.length > 0){
-    console.log('statsElContent has items')
     for (let i = (statsElContent.length - 1); i >= 0; i--){
       statsElContent[i].remove();
     }
   };
-  console.log(statsElContent)
-  // statsElContent.forEach(stat => {
-  //   stat.remove()
-  //   }
-  // )
 };
-clearStats();
 
 function displayStats() {
-  let stats = document.querySelector('.stats');
-  let timeLeftEndEl = document.createElement('p');
+    let stats = document.querySelector('.stats');
+    let timeLeftEndEl = document.createElement('p');
+    let guessesLeftEndEl = document.createElement('p');
   timeLeftEndEl.textContent = `You had ${timeLeft} second(s) left.`;
-    console.log(`${timeLeftEndEl}`);
-  let guessesLeftEndEl = document.createElement('p');
   guessesLeftEndEl.textContent = `You had ${numberOfGuesses} guesses left.`;
-    console.log(`${guessesLeftEndEl}`);
   stats.appendChild(timeLeftEndEl);
   stats.appendChild(guessesLeftEndEl);
-    console.log(`You had ${timeLeft} second(s) left.`)
 }
 
 async function returnToMainMenuAnimation(){
@@ -309,7 +301,7 @@ function updateScore(gameEndState){
     winsEl.textContent = numberOfWins;
   } else {
     numberOfLosses++;
-    winsEl.textContent = numberOfLosses;
+    lossesEl.textContent = numberOfLosses;
   }
 }
 
