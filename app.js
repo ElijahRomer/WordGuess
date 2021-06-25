@@ -38,24 +38,28 @@ document.addEventListener('DOMContentLoaded', loadScores)
 
 function loadScores(){
   console.log('LOAD SCORES FIRED');
+    //check and load wins
   if (localStorage.getItem('wins') === null){
     console.log(`localStorage has NO wins record`);
     numberOfWins = 0;
     winsEl.textContent = numberOfWins;
+    storeWinRecordInLocalStorage()
   } else {
     console.log(`localStorage has wins record`);
-    numberOfWins = localStorage.getItem('wins');
+    numberOfWins = JSON.parse(localStorage.getItem('wins'));
     console.log(`numberOfWins recorded value is %c${numberOfWins}.`, 'color:orange')
     console.log(`numberOfWins value type is %c${typeof numberOfWins}.`, 'color:orange')
-    winsEl.textContent = JSON.parse(numberOfWins);
+    winsEl.textContent = numberOfWins;
   }
+    //check and load losses
   if (localStorage.getItem('losses') === null){
     console.log(`localStorage has NO losses record`);
     numberOfLosses = 0;
     lossesEl.textContent = numberOfLosses;
+    storeLossRecordInLocalStorage()
   } else {
     console.log(`localStorage has losses record`);
-    numberOfLosses = localStorage.getItem('losses');
+    numberOfLosses = JSON.parse(localStorage.getItem('losses'));
     console.log(`numberOfLosses recorded value is %c${numberOfLosses}.`, 'color:orange')
     console.log(`numberOfLosses value type is %c${typeof numberOfLosses}.`, 'color:orange')
     lossesEl.textContent = JSON.parse(numberOfLosses);
@@ -319,31 +323,43 @@ function updateScore(gameEndState){
     console.log(`The Number of wins has been updated to %c${numberOfWins}.`, 'color:orange');
     console.log(`The numberOfWins value type is %c${typeof numberOfWins}`, 'color:orange')
     winsEl.textContent = numberOfWins;
-    storeWinLossRecordInLocalStorage();
+    storeWinRecordInLocalStorage();
   } else {
     numberOfLosses++;
     console.log(`The Number of losses has been updated to %c${numberOfLosses}.`, 'color:orange');
     console.log(`The numberOfLosses value type is %c${typeof numberOfLosses}`, 'color:orange')
     lossesEl.textContent = numberOfLosses;
-    storeWinLossRecordInLocalStorage();
+    storeLossRecordInLocalStorage();
   }
 }
 
 // console.log(typeof JSON.parse(localStorage.getItem('wins')))
 
-function storeWinLossRecordInLocalStorage(){
-  console.log('STORE WINS AND LOSSES IN LOCAL STORAGE FIRED')
+function storeWinRecordInLocalStorage(){
+  console.log('STORE WIN RECORD IN LOCAL STORAGE FIRED')
+    
     console.log(`The number of wins in localStorage before this round was ${JSON.parse(localStorage.getItem('wins'))}, type ${typeof JSON.parse(localStorage.getItem('wins'))}`);
-    console.log(`The number of losses in localStorage before this round was ${JSON.parse(localStorage.getItem('losses'))}, type ${typeof JSON.parse(localStorage.getItem('losses'))}`);
-    console.log(`The number of wins at storeWinLossRecordInLocalStorage is ${numberOfWins}.`)
-    console.log(`The number of losses at storeWinLossRecordInLocalStorage is ${numberOfLosses}.`)
+
+    console.log(`The number of wins at function storeWinRecordInLocalStorage is ${numberOfWins}.`);
+
   localStorage.setItem('wins', JSON.stringify(numberOfWins));
-  localStorage.setItem('losses', JSON.stringify(numberOfLosses));
+
     console.log(`The number of wins in localStorage has been updated to ${JSON.parse(localStorage.getItem('wins'))}, type ${typeof JSON.parse(localStorage.getItem('wins'))}`);
-    console.log(`The number of losses in localStorage has been updated to ${JSON.parse(localStorage.getItem('losses'))}, type ${typeof JSON.parse(localStorage.getItem('losses'))}`);
+
 }
 
+function storeLossRecordInLocalStorage(){
+  console.log('STORE LOSS RECORD IN LOCAL STORAGE FIRED');
 
+    console.log(`The number of losses in localStorage before this round was ${JSON.parse(localStorage.getItem('losses'))}, type ${typeof JSON.parse(localStorage.getItem('losses'))}`);
+
+    console.log(`The numberOfLosses at function storeLossRecordInLocalStorage is ${numberOfLosses}.`);
+
+  localStorage.setItem('losses', JSON.stringify(numberOfLosses));
+
+    console.log(`The number of losses in localStorage has been updated to ${JSON.parse(localStorage.getItem('losses'))}, type ${typeof JSON.parse(localStorage.getItem('losses'))}`);
+
+}
 
 
 
