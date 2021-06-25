@@ -3,7 +3,6 @@ console.log('If this is logged, then app.js is linked correctly');
 // As a user, I want to start the game by clicking on a button.
 
 //******START GAME BUTTON event listener
-console.log(document.querySelector('.end-screen').firstChild)
 let mainMenuEl = document.querySelector('.main-menu');
 let gameScreenEl = document.querySelector('.game-screen');
 let endScreenEl = document.querySelector('.end-screen');
@@ -11,14 +10,15 @@ let winsEl = document.querySelector('#wins');
 let lossesEl = document.querySelector('#losses'); 
 // let possibleWords = ['Challenge', 'Awesome', 'Programming', 'Photograph', 'Skydiving', 'Parachute'];
 // let possibleWords = ['Skydiving'];
-let possibleWords = ['a'];
+let possibleWords = ['Zzzzzzzzz'];
+// let possibleWords = ['a'];
 // let possibleWords = ['objectivization'];
 // let acceptableLetters = ['a', 'b']
 let slotHTMLCollection;
 let lettersGuessed;
 let incorrectLettersGuessed;
 let guessesLeftEl = document.querySelector('.guesses-left')
-let numberOfGuesses;
+let remainingNumberOfGuesses;
 let acceptableGuessLettersArray = createAcceptableGuessLettersArray();
 let numberOfLetterSlots;
 let numberOfMatches;
@@ -38,19 +38,145 @@ document.addEventListener('DOMContentLoaded', loadScores)
 
 function loadScores(){
   console.log('LOAD SCORES FIRED');
-  if (localStorage.getItem('wins')){
-    console.log(`localStorage has wins`)
-  } else {
+  if (localStorage.getItem('wins') === null){
+    console.log(`localStorage has NO wins record`);
     numberOfWins = 0;
     winsEl.textContent = numberOfWins;
-  }
-  if (localStorage.getItem('losses')){
-    console.log(`localStorage has losses recorded`)
   } else {
+    console.log(`localStorage has wins record`);
+    numberOfWins = localStorage.getItem('wins');
+    console.log(`numberOfWins recorded value is %c${numberOfWins}.`, 'color:orange')
+    console.log(`numberOfWins value type is %c${typeof numberOfWins}.`, 'color:orange')
+    winsEl.textContent = JSON.parse(numberOfWins);
+  }
+  if (localStorage.getItem('losses') === null){
+    console.log(`localStorage has NO losses record`);
     numberOfLosses = 0;
     lossesEl.textContent = numberOfLosses;
+  } else {
+    console.log(`localStorage has losses record`);
+    numberOfLosses = localStorage.getItem('losses');
+    console.log(`numberOfLosses recorded value is %c${numberOfLosses}.`, 'color:orange')
+    console.log(`numberOfLosses value type is %c${typeof numberOfLosses}.`, 'color:orange')
+    lossesEl.textContent = JSON.parse(numberOfLosses);
   }
 }
+
+
+async function startGame() {
+  console.log('%cSTARTGAME FIRED', 'color:lightblue; font-weight:bolder');
+resetGameValues();
+document.addEventListener('keypress', guessCheck);
+  var word = wordSelector().toLowerCase(); 
+  slotHTMLCollection = createWordSlots(word);
+  guessesLeftEl.textContent = remainingNumberOfGuesses;
+assignEachWordSlotAValidLetter(word, slotHTMLCollection);
+await transitionAnimation(mainMenuEl, gameScreenEl);
+timerStart();
+clearStats();
+};
+
+function resetGameValues() {
+console.log('RESET GAME VALUES FIRED')
+numberOfMatches = 0;
+remainingNumberOfGuesses = 6;
+lettersGuessed = [];
+incorrectLettersGuessed = [];
+let lettersGuessedEl = document.querySelector('.letters-guessed');
+lettersGuessedEl.textContent = incorrectLettersGuessed;
+timeLeft = 60;
+let timeRemainingEl = document.querySelector('.time-remaining');
+timeRemainingEl.textContent = timeLeft;
+
+  if(slotHTMLCollection){
+    console.log(`%cslotHTMLCollection detected as present`, 'color:lightblue');
+    for (let i = (slotHTMLCollection.length -1); i >= 0; i--){
+      slotHTMLCollection[i].remove();
+    }
+  }
+}
+
+function timeout(fn, ms){
+console.log('TIMEOUT FIRED')
+return new Promise(resolve => setTimeout(()=> {
+  fn();
+  resolve();
+}, ms));
+}
+
+async function transitionAnimation(currentElement, nextElement){
+console.log('TRANSITIONANIMATION FIRED')
+currentElement.classList.add('hidden');
+await timeout(function(){
+  currentElement.style.display = 'none';
+  currentElement.classList.remove('hidden');
+  nextElement.style.display = 'flex';
+  nextElement.classList.add('reveal');
+}, 700)
+await timeout(function(){
+  nextElement.classList.remove('reveal');
+  console.log(`reveal class removed from ${nextElement}`)
+}, 700)
+}
+
+
+function timerStart(){
+console.log('TIMERSTART FIRED')
+let timeRemainingDisplayEl = document.querySelector('.time-remaining-display');
+ let timeRemainingEl = document.querySelector('.time-remaining');
+//  timeLeft = 60;
+ timerMechanism = setInterval(() => {
+  if(timeLeft <= 10){
+    timeRemainingDisplayEl.style.color = 'red';
+  };
+   if (timeLeft <= 0){
+      document.removeEventListener('keypress', guessCheck);
+      clearInterval(timerMechanism);
+      gameEnd('timeLoss');
+   } else {
+      timeLeft--;
+      timeRemainingEl.textContent = timeLeft;
+   };
+ }, 1000);
+}
+
+
+function wordSelector(){
+console.log('WORDSELECTOR FIRED')
+return possibleWords[Math.floor(Math.random() * possibleWords.length)];
+}
+
+
+function createWordSlots(word){
+console.log('%cCREATEWORDSLOTS FIRED', 'color:red')
+numberOfLetterSlots = word.length;
+console.log(`The length of the chosen word is ${numberOfLetterSlots}.`);
+for (let i = 0; i < numberOfLetterSlots; i++){
+  let slot = document.createElement('input');
+  slot.classList.add('letter-slot');
+  slot.value = ' ';
+  slot.setAttribute('maxlength', '1');
+  slot.readOnly = true;
+  document.querySelector('.word-slots').append(slot);
+}
+let slotHTMLCollection = document.getElementsByClassName('letter-slot');
+// console.log(slotHTMLCollection);
+return slotHTMLCollection;
+}
+
+function assignEachWordSlotAValidLetter(word, slotHTMLCollection) {
+console.log('ASSIGNEACHWORDSLOTAVALIDLETTER FIRED')
+let currentWordLettersArray = word.split('');
+
+currentWordLettersArray.forEach((letter, i) => {
+  slotHTMLCollection[i].classList.add(letter);
+  slotHTMLCollection[i].classList.add(letter.toUpperCase());
+})
+// console.log(slotHTMLCollection);
+return slotHTMLCollection;
+}
+
+
 
 //create acceptable guess array
 function createAcceptableGuessLettersArray(){
@@ -110,9 +236,10 @@ function guessCheck(eventObject){
 }
 
 function gameWinCheck (numberOfMatches) {
-  console.log(`%cGAMEWINCHECK FIRED.`, 'color:limegreen')
+  console.log(`%cGAMEWINCHECK FIRED.`, 'color:yellow')
   if (numberOfMatches == numberOfLetterSlots){
-    console.log('WIN REGISTERED!')
+    console.log('%cWIN REGISTERED!', 'color:limegreen')
+    document.removeEventListener('keypress', guessCheck);
     gameEnd('win');
   } else {
     return;
@@ -125,127 +252,17 @@ function invalidGuess(keyPressed){
   let lettersGuessedEl = document.querySelector('.letters-guessed');
   if (incorrectLettersGuessed.includes(` ${keyPressed}`)) {
     console.log(`You have already guessed ${keyPressed}.`);
-  } else if(numberOfGuesses === 0){
+  } else if(remainingNumberOfGuesses === 0){
+    document.removeEventListener('keypress', guessCheck);
     gameEnd('guessLoss');
   } else {
-  numberOfGuesses--;
-  guessesLeftEl.textContent = numberOfGuesses;
-  incorrectLettersGuessed.push(` ${keyPressed}`);
-  lettersGuessedEl.textContent = incorrectLettersGuessed;
+    remainingNumberOfGuesses--;
+    guessesLeftEl.textContent = remainingNumberOfGuesses;
+    incorrectLettersGuessed.push(` ${keyPressed}`);
+    lettersGuessedEl.textContent = incorrectLettersGuessed;
   }
 }
 
-async function startGame() {
-    console.log('STARTGAME FIRED');
-  resetGameValues();
-  document.addEventListener('keypress', guessCheck);
-    var word = wordSelector().toLowerCase(); 
-    slotHTMLCollection = createWordSlots(word);
-    guessesLeftEl.textContent = numberOfGuesses;
-  assignEachWordSlotAValidLetter(word, slotHTMLCollection);
-  await transitionAnimation(mainMenuEl, gameScreenEl);
-  timerStart();
-  clearStats();
-};
-
-function resetGameValues() {
-  console.log('RESET GAME VALUES FIRED')
-  numberOfMatches = 0;
-  numberOfGuesses = 6;
-  lettersGuessed = [];
-  incorrectLettersGuessed = [];
-  let lettersGuessedEl = document.querySelector('.letters-guessed');
-  lettersGuessedEl.textContent = incorrectLettersGuessed;
-  timeLeft = 60;
-  let timeRemainingEl = document.querySelector('.time-remaining');
-  timeRemainingEl.textContent = timeLeft;
-  console.log(slotHTMLCollection);
-  if(slotHTMLCollection){
-    for (let i = 0; i < slotHTMLCollection.length; i++){
-      slotHTMLCollection[i].remove();
-    }
-    console.log(slotHTMLCollection);
-  }
-}
-
-function timeout(fn, ms){
-  console.log('TIMEOUT FIRED')
-  return new Promise(resolve => setTimeout(()=> {
-    fn();
-    resolve();
-  }, ms));
-}
-
-async function transitionAnimation(currentElement, nextElement){
-  console.log('TRANSITIONANIMATION FIRED')
-  currentElement.classList.add('hidden');
-  await timeout(function(){
-    currentElement.style.display = 'none';
-    currentElement.classList.remove('hidden');
-    nextElement.style.display = 'flex';
-    nextElement.classList.add('reveal');
-  }, 700)
-  await timeout(function(){
-    nextElement.classList.remove('reveal');
-    console.log(`reveal class removed from ${nextElement}`)
-  }, 700)
-}
-
-
-function timerStart(){
-  console.log('TIMERSTART FIRED')
-  let timeRemainingDisplayEl = document.querySelector('.time-remaining-display');
-   let timeRemainingEl = document.querySelector('.time-remaining');
-  //  timeLeft = 60;
-   timerMechanism = setInterval(() => {
-    if(timeLeft <= 10){
-      timeRemainingDisplayEl.style.color = 'red';
-    };
-     if (timeLeft <= 0){
-        clearInterval(timerMechanism);
-        gameEnd('timeLoss');
-     } else {
-        timeLeft--;
-        timeRemainingEl.textContent = timeLeft;
-     };
-   }, 1000);
-}
-
-
-function wordSelector(){
-  console.log('WORDSELECTOR FIRED')
-  return possibleWords[Math.floor(Math.random() * possibleWords.length)];
-}
-
-
-function createWordSlots(word){
-  console.log('CREATEWORDSLOTS FIRED')
-  numberOfLetterSlots = word.length;
-  console.log(`The length of the chose word is ${numberOfLetterSlots}.`);
-  for (let i = 0; i < numberOfLetterSlots; i++){
-    let slot = document.createElement('input');
-    slot.classList.add('letter-slot');
-    slot.value = ' ';
-    slot.setAttribute('maxlength', '1');
-    slot.readOnly = true;
-    document.querySelector('.word-slots').append(slot);
-  }
-  let slotHTMLCollection = document.getElementsByClassName('letter-slot');
-  // console.log(slotHTMLCollection);
-  return slotHTMLCollection;
-}
-
-function assignEachWordSlotAValidLetter(word, slotHTMLCollection) {
-  console.log('ASSIGNEACHWORDSLOTAVALIDLETTER FIRED')
-  let currentWordLettersArray = word.split('');
-
-  currentWordLettersArray.forEach((letter, i) => {
-    slotHTMLCollection[i].classList.add(letter);
-    slotHTMLCollection[i].classList.add(letter.toUpperCase());
-  })
-  // console.log(slotHTMLCollection);
-  return slotHTMLCollection;
-}
 
 
 async function gameEnd(gameEndState){
@@ -253,7 +270,6 @@ async function gameEnd(gameEndState){
   clearInterval(timerMechanism);
   let endScreenTitle = document.querySelector('.end-screen').firstChild.nextSibling;
   let endScreenStatBox = document.querySelector('.end-screen').firstChild.nextSibling.nextSibling.nextSibling;
-  console.log(endScreenStatBox);
   updateScore(gameEndState);
   if(gameEndState === 'win'){
     endScreenTitle.textContent = `You WON! You guessed all the letters correctly within the allowed timeframe.`;
@@ -271,8 +287,8 @@ async function gameEnd(gameEndState){
   }
 }
 
-function clearStats(){
-  console.log(`CLEAR STATS FIRED`)
+function clearStats(){ // clears stats html collection NOT word slots
+  console.log(`%cCLEAR STATS FIRED`, 'color:red')
   let statsElContent = document.getElementsByClassName('stats')[0].children;
   if (statsElContent.length > 0){
     for (let i = (statsElContent.length - 1); i >= 0; i--){
@@ -282,11 +298,12 @@ function clearStats(){
 };
 
 function displayStats() {
+  console.log(`DISPLAY STATS FIRED`)
     let stats = document.querySelector('.stats');
     let timeLeftEndEl = document.createElement('p');
     let guessesLeftEndEl = document.createElement('p');
   timeLeftEndEl.textContent = `You had ${timeLeft} second(s) left.`;
-  guessesLeftEndEl.textContent = `You had ${numberOfGuesses} guesses left.`;
+  guessesLeftEndEl.textContent = `You had ${remainingNumberOfGuesses} guesses left.`;
   stats.appendChild(timeLeftEndEl);
   stats.appendChild(guessesLeftEndEl);
 }
@@ -296,14 +313,37 @@ async function returnToMainMenuAnimation(){
 }
 
 function updateScore(gameEndState){
+  console.log('UPDATE SCORE FIRED')
   if(gameEndState === 'win'){
     numberOfWins++;
+    console.log(`The Number of wins has been updated to %c${numberOfWins}.`, 'color:orange');
+    console.log(`The numberOfWins value type is %c${typeof numberOfWins}`, 'color:orange')
     winsEl.textContent = numberOfWins;
+    storeWinLossRecordInLocalStorage();
   } else {
     numberOfLosses++;
+    console.log(`The Number of losses has been updated to %c${numberOfLosses}.`, 'color:orange');
+    console.log(`The numberOfLosses value type is %c${typeof numberOfLosses}`, 'color:orange')
     lossesEl.textContent = numberOfLosses;
+    storeWinLossRecordInLocalStorage();
   }
 }
+
+// console.log(typeof JSON.parse(localStorage.getItem('wins')))
+
+function storeWinLossRecordInLocalStorage(){
+  console.log('STORE WINS AND LOSSES IN LOCAL STORAGE FIRED')
+    console.log(`The number of wins in localStorage before this round was ${JSON.parse(localStorage.getItem('wins'))}, type ${typeof JSON.parse(localStorage.getItem('wins'))}`);
+    console.log(`The number of losses in localStorage before this round was ${JSON.parse(localStorage.getItem('losses'))}, type ${typeof JSON.parse(localStorage.getItem('losses'))}`);
+    console.log(`The number of wins at storeWinLossRecordInLocalStorage is ${numberOfWins}.`)
+    console.log(`The number of losses at storeWinLossRecordInLocalStorage is ${numberOfLosses}.`)
+  localStorage.setItem('wins', JSON.stringify(numberOfWins));
+  localStorage.setItem('losses', JSON.stringify(numberOfLosses));
+    console.log(`The number of wins in localStorage has been updated to ${JSON.parse(localStorage.getItem('wins'))}, type ${typeof JSON.parse(localStorage.getItem('wins'))}`);
+    console.log(`The number of losses in localStorage has been updated to ${JSON.parse(localStorage.getItem('losses'))}, type ${typeof JSON.parse(localStorage.getItem('losses'))}`);
+}
+
+
 
 
 

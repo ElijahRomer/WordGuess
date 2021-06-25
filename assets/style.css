@@ -106,6 +106,7 @@ h1 {
 }
 
 #start-game{
+  cursor: pointer;
   background-color:grey;
   font-size: x-large;
   color: white;
@@ -180,6 +181,7 @@ h1 {
 }
 
 .end-screen .return-main-menu {
+  cursor:pointer;
   border: black solid 5px;
   padding:25px;
   margin: 20px;
