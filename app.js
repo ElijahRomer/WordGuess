@@ -145,7 +145,7 @@ let timeRemainingDisplayEl = document.querySelector('.time-remaining-display');
       timeLeft--;
       timeRemainingEl.textContent = timeLeft;
    };
- }, 100);
+ }, 1000);
 }
 
 
@@ -373,7 +373,9 @@ function storeLossRecordInLocalStorage(){
 
 
 function resetScoreRecord(){
-  console.log('Reset score button works')
+  console.log('RESET SCORE FIRED');
+  let confirmReset = confirm('are you sure you want to reset scores?');
+  if (!confirmReset) { return };
   if ((JSON.parse(localStorage.getItem('wins')) === null || JSON.parse(localStorage.getItem('wins')) === 0) && (JSON.parse(localStorage.getItem('losses')) === null || JSON.parse(localStorage.getItem('losses')) === 0)){
       alert('There are no current scores to be removed.');
   } else {
