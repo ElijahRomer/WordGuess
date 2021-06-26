@@ -131,6 +131,32 @@ h1 {
   transition: background-color 50ms, border 50ms;
 }
 
+#reset-win-loss{
+  cursor: pointer;
+  background-color:rgb(170, 0, 0);
+  font-size: large;
+  color: white;
+  border: black solid 5px;
+  border-radius: 15px;
+  width: 30%;
+  height: 45px;
+  transition: background-color 0.5s, border 0.5s;
+}
+
+#reset-win-loss:hover{
+  background-color:rgb(230, 0, 0);
+  color: white;
+  border: #444 solid 5px;
+  transition: background-color 0.5s, border 0.5s;
+}
+
+#reset-win-loss:active{
+  background-color:lightsalmon;
+  color: white;
+  border: grey solid 5px;
+  transition: background-color 50ms, border 50ms;
+}
+
 .word-slots{
   background-color: red;
   text-align: center;

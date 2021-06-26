@@ -8,9 +8,9 @@ let gameScreenEl = document.querySelector('.game-screen');
 let endScreenEl = document.querySelector('.end-screen');
 let winsEl = document.querySelector('#wins');
 let lossesEl = document.querySelector('#losses'); 
-// let possibleWords = ['Challenge', 'Awesome', 'Programming', 'Photograph', 'Skydiving', 'Parachute'];
+let possibleWords = ['Challenge', 'Awesome', 'Programming', 'Photograph', 'Skydiving', 'Parachute'];
 // let possibleWords = ['Skydiving'];
-let possibleWords = ['Zzzzzzzzz'];
+// let possibleWords = ['Zzzzzzzzz'];
 // let possibleWords = ['a'];
 // let possibleWords = ['objectivization'];
 // let acceptableLetters = ['a', 'b']
@@ -30,11 +30,13 @@ let numberOfLosses;
 //start button event listener
 document.querySelector('#start-game').addEventListener('click', startGame);
 
+document.querySelector('#reset-win-loss').addEventListener('click', resetScoreRecord);
+
 //return to main menu event listener
 document.querySelector('.return-main-menu').addEventListener('click', returnToMainMenuAnimation);
 
 //retrieve previous scores from localStorage
-document.addEventListener('DOMContentLoaded', loadScores)
+document.addEventListener('DOMContentLoaded', loadScores);
 
 function loadScores(){
   console.log('LOAD SCORES FIRED');
@@ -91,6 +93,8 @@ lettersGuessedEl.textContent = incorrectLettersGuessed;
 timeLeft = 60;
 let timeRemainingEl = document.querySelector('.time-remaining');
 timeRemainingEl.textContent = timeLeft;
+let timeRemainingDisplayEl = document.querySelector('.time-remaining-display');
+timeRemainingDisplayEl.style.color = 'black';
 
   if(slotHTMLCollection){
     console.log(`%cslotHTMLCollection detected as present`, 'color:lightblue');
@@ -141,7 +145,7 @@ let timeRemainingDisplayEl = document.querySelector('.time-remaining-display');
       timeLeft--;
       timeRemainingEl.textContent = timeLeft;
    };
- }, 1000);
+ }, 100);
 }
 
 
@@ -184,6 +188,8 @@ return slotHTMLCollection;
 
 //create acceptable guess array
 function createAcceptableGuessLettersArray(){
+//REVAMP THIS TO A REGEX CHECK
+
   let lowerCaseCodeArray = Array.from(Array(26)).map(
       (element, index) => {
       return index + 97
@@ -234,7 +240,7 @@ function guessCheck(eventObject){
     invalidGuess(keyPressed);
   }
 
-    if (numberOfMatchesThisIteration > 0){
+  if (numberOfMatchesThisIteration > 0){
     gameWinCheck(numberOfMatches);
   }
 }
@@ -289,7 +295,9 @@ async function gameEnd(gameEndState){
       endScreenStatBox.style.display = 'none';
       await transitionAnimation(gameScreenEl, endScreenEl);
   }
-}
+};
+
+
 
 function clearStats(){ // clears stats html collection NOT word slots
   console.log(`%cCLEAR STATS FIRED`, 'color:red')
@@ -348,6 +356,8 @@ function storeWinRecordInLocalStorage(){
 
 }
 
+
+
 function storeLossRecordInLocalStorage(){
   console.log('STORE LOSS RECORD IN LOCAL STORAGE FIRED');
 
@@ -358,9 +368,24 @@ function storeLossRecordInLocalStorage(){
   localStorage.setItem('losses', JSON.stringify(numberOfLosses));
 
     console.log(`The number of losses in localStorage has been updated to ${JSON.parse(localStorage.getItem('losses'))}, type ${typeof JSON.parse(localStorage.getItem('losses'))}`);
-
 }
 
+
+
+function resetScoreRecord(){
+  console.log('Reset score button works')
+  if ((JSON.parse(localStorage.getItem('wins')) === null || JSON.parse(localStorage.getItem('wins')) === 0) && (JSON.parse(localStorage.getItem('losses')) === null || JSON.parse(localStorage.getItem('losses')) === 0)){
+      alert('There are no current scores to be removed.');
+  } else {
+      numberOfWins = 0;
+      numberOfLosses = 0;
+        localStorage.setItem('wins', JSON.stringify(numberOfWins));
+        localStorage.setItem('losses', JSON.stringify(numberOfLosses));
+      winsEl.textContent = 0;
+      lossesEl.textContent = 0;
+    alert('Scores have been reset.');
+  }
+}
 
 
 // As a user, I want to try and guess a word by filling in a number of blanks that match the number of letters in that word.
